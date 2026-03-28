@@ -6,7 +6,19 @@ Il formato segue [Keep a Changelog](https://keepachangelog.com/it/1.0.0/).
 
 ---
 
-## [0.3.0] — 2025
+## [0.3.1] — 2026
+
+### Corretto
+- **Bug WHOIS — dati non visibili nella UI** — i campi `domain_age_days` e `whois_creation_date` venivano calcolati correttamente ma non inclusi nella risposta API; il frontend non li riceveva mai e la checkbox "Abilita WHOIS" non produceva alcun risultato visibile
+- **Rinomina progetto** — da OpenMailForensics a **EMLyzer** in tutti i file (sorgenti Python, frontend React, script di avvio, documentazione, cartella radice); prefissi `omf_` → `eml_`; chiave localStorage `omf_lang` → `emlyzer_lang`; database `omf.db` → `emlyzer.db`
+
+### Aggiunto
+- **Badge età dominio nella scheda URL** — quando WHOIS è abilitato, ogni URL mostra un badge colorato con l'età del dominio: 🔴 meno di 30 giorni (nuovo), 🟡 tra 30 e 90 giorni (recente), ✅ oltre 90 giorni; badge grigio se nessun dato WHOIS disponibile
+- **Documentazione completa** — `README.md`, `CHANGELOG.md`, `LICENSE` (MIT), `docs/REQUISITI.md`, `docs/INSTALLAZIONE.md`, `docs/UTILIZZO.md`, `docs/CONFIGURAZIONE.md`, `docs/API.md`; orientata a utenti non esperti con istruzioni passo-passo per Windows e Linux
+
+---
+
+## [0.3.0] — 2026
 
 ### Aggiunto
 - **Note dell'analista** — area di testo nella scheda Riepilogo per salvare osservazioni manuali; persistenza nel database; incluse nel report .docx; endpoint `PATCH /api/analysis/{job_id}/notes`
@@ -23,7 +35,7 @@ Il formato segue [Keep a Changelog](https://keepachangelog.com/it/1.0.0/).
 
 ---
 
-## [0.2.0] — 2025
+## [0.2.0] — 2026
 
 ### Aggiunto
 - **Localizzazione italiano/inglese** — tutta l'interfaccia e i messaggi di analisi; pulsante IT/EN nella navbar; impostazione permanente via `LANGUAGE` nel file `.env`; endpoint `POST /api/settings/language`
@@ -47,7 +59,7 @@ Il formato segue [Keep a Changelog](https://keepachangelog.com/it/1.0.0/).
 
 ---
 
-## [0.1.0] — 2025
+## [0.1.0] — 2026
 
 ### Prima release
 

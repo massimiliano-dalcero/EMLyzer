@@ -6,29 +6,19 @@ Questa guida ti accompagna passo dopo passo dall'installazione di Python fino al
 
 ## Indice
 
-- [Guida all'installazione — EMLyzer](#guida-allinstallazione--emlyzer)
-  - [Indice](#indice)
-  - [1. Installare Python 3.13](#1-installare-python-313)
-    - [Windows](#windows)
-    - [Linux (Ubuntu / Debian)](#linux-ubuntu--debian)
-    - [macOS](#macos)
-  - [2. Scaricare EMLyzer](#2-scaricare-emlyzer)
-    - [Scarica come archivio ZIP / TAR](#scarica-come-archivio-zip--tar)
-    - [Clona con Git (alternativa)](#clona-con-git-alternativa)
-  - [3. Primo avvio](#3-primo-avvio)
-    - [Windows](#windows-1)
-    - [Linux / macOS](#linux--macos)
-  - [4. Cosa succede al primo avvio](#4-cosa-succede-al-primo-avvio)
-  - [5. Verifica che funzioni](#5-verifica-che-funzioni)
-  - [6. Risolvere problemi comuni](#6-risolvere-problemi-comuni)
-    - [❌ "Python non trovato nel PATH" (Windows)](#-python-non-trovato-nel-path-windows)
-    - [❌ "Installazione dipendenze fallita" — errore `lxml` o `scikit-learn`](#-installazione-dipendenze-fallita--errore-lxml-o-scikit-learn)
-    - [❌ "Porta 8000 già in uso"](#-porta-8000-già-in-uso)
-    - [❌ La finestra si chiude subito (Windows)](#-la-finestra-si-chiude-subito-windows)
-    - [❌ Il browser mostra "Impossibile raggiungere il sito"](#-il-browser-mostra-impossibile-raggiungere-il-sito)
-    - [❌ "Permission denied" su Linux/macOS](#-permission-denied-su-linuxmacos)
-  - [Fermare l'applicazione](#fermare-lapplicazione)
-  - [Aggiornare EMLyzer](#aggiornare-emlyzer)
+1. [Installare Python 3.13](#1-installare-python-313)
+   - [Windows](#windows)
+   - [Linux (Ubuntu / Debian)](#linux-ubuntu--debian)
+   - [macOS](#macos)
+2. [Scaricare EMLyzer](#2-scaricare-openmailforensics)
+   - [Scarica come archivio ZIP / TAR](#scarica-come-archivio-zip--tar)
+   - [Clona con Git (alternativa)](#clona-con-git-alternativa)
+3. [Primo avvio](#3-primo-avvio)
+   - [Windows](#windows-1)
+   - [Linux / macOS](#linux--macos)
+4. [Cosa succede al primo avvio](#4-cosa-succede-al-primo-avvio)
+5. [Verifica che funzioni](#5-verifica-che-funzioni)
+6. [Risolvere problemi comuni](#6-risolvere-problemi-comuni)
 
 ---
 
@@ -45,6 +35,8 @@ Vai su [https://www.python.org/downloads/](https://www.python.org/downloads/) e 
 Fai doppio clic sul file scaricato (es. `python-3.13.2-amd64.exe`).
 
 > ⚠️ **IMPORTANTE:** Prima di cliccare "Install Now", assicurati di spuntare la casella **"Add Python 3.13 to PATH"** in basso. Se non la spunti, il computer non troverà Python quando lo cerca.
+
+![Schermata installer Python con casella PATH evidenziata]
 
 Poi clicca **"Install Now"** e aspetta che finisca.
 

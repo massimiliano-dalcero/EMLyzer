@@ -331,6 +331,8 @@ def _build_response(job_id, parsed, header_result, body_result, url_result, atta
                     "is_punycode": u.is_punycode,
                     "https": u.https_used,
                     "resolved_ip": u.resolved_ip,
+                    "domain_age_days": u.domain_age_days,
+                    "whois_creation_date": str(u.whois_creation_date) if u.whois_creation_date else None,
                     "risk_score": u.risk_score,
                     "findings": u.findings,
                 }

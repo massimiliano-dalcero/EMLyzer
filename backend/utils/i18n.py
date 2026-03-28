@@ -218,6 +218,9 @@ TRANSLATIONS = {
         "it": "DNS non risolvibile: {host}",
         "en": "DNS resolution failed: {host}",
     },
+    "url.age_new":     { "it": "Dominio {days} giorni (nuovo!)",  "en": "Domain {days} days (new!)" },
+    "url.age_recent":  { "it": "Dominio {days} giorni (recente)", "en": "Domain {days} days (recent)" },
+    "url.age_ok":      { "it": "Dominio {days} giorni",            "en": "Domain {days} days" },
     "url.new_domain": {
         "it": "Dominio registrato da meno di 30 giorni ({days} giorni)",
         "en": "Domain registered less than 30 days ago ({days} days)",

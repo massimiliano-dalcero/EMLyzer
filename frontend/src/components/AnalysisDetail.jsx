@@ -517,6 +517,10 @@ function URLCard({ url, t }) {
         {url.is_shortener && <Tag color="var(--risk-medium)">{t('url.shortener')}</Tag>}
         {url.is_punycode  && <Tag color="var(--risk-high)">{t('url.punycode')}</Tag>}
         {url.resolved_ip  && <Tag color="var(--text-muted)">{url.resolved_ip}</Tag>}
+        {url.domain_age_days != null && url.domain_age_days < 30  && <Tag color="var(--risk-high)">{t('url.age_new', { days: url.domain_age_days })}</Tag>}
+        {url.domain_age_days != null && url.domain_age_days >= 30 && url.domain_age_days < 90 && <Tag color="var(--risk-medium)">{t('url.age_recent', { days: url.domain_age_days })}</Tag>}
+        {url.domain_age_days != null && url.domain_age_days >= 90 && <Tag color="var(--risk-low)">{t('url.age_ok', { days: url.domain_age_days })}</Tag>}
+        {url.domain_age_days == null && url.whois_creation_date === null && url.host && !url.is_ip && <Tag color="var(--text-muted)">{t('url.whois_no_data')}</Tag>}
       </div>
       {url.findings?.map((f, i) => (
         <div key={i} style={{ fontSize: 11, color: 'var(--text-muted)', paddingLeft: 8, borderLeft: '2px solid var(--border)', marginTop: 3 }}>
