@@ -28,7 +28,7 @@ export default function UploadZone({ onAnalysisComplete }) {
     } catch (err) {
       setStatus('error'); setMessage(err.response?.data?.detail || err.message || 'Error')
     }
-  }, [onAnalysisComplete, t])
+  }, [onAnalysisComplete, t, doWhois])
 
   const onDrop = useCallback((e) => {
     e.preventDefault(); setDragging(false); handleFile(e.dataTransfer.files[0])
@@ -43,7 +43,7 @@ export default function UploadZone({ onAnalysisComplete }) {
     } catch (err) {
       setStatus('error'); setMessage(err.response?.data?.detail || err.message || 'Error')
     }
-  }, [manualText, onAnalysisComplete, t])
+  }, [manualText, onAnalysisComplete, t, doWhois])
 
   const busy = status === 'uploading' || status === 'analyzing'
 
