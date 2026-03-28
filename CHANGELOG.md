@@ -6,6 +6,16 @@ Il formato segue [Keep a Changelog](https://keepachangelog.com/it/1.0.0/).
 
 ---
 
+## [0.3.2] — 2026
+
+### Corretto
+- **Bug WHOIS — checkbox ignorata** — `doWhois` mancava nelle dipendenze di `useCallback` in `UploadZone.jsx`: la funzione di upload veniva creata una volta sola con il valore iniziale `false`, ignorando qualsiasi modifica successiva alla checkbox. La checkbox appariva attiva ma il parametro `do_whois=false` veniva sempre inviato al backend
+- **Bug URL vuoti nello storico** — `_build_response_from_record` restituiva gli URL con i nomi dei campi del dataclass Python (`original_url`, `is_ip_address`, `https_used`) invece di quelli attesi dal frontend (`url`, `is_ip`, `https`); le card URL apparivano vuote riaprendo un'analisi dallo storico
+- **Bug badge WHOIS — `whois_attempted` non persistito nel DB** — il campo veniva aggiunto alla risposta JSON del POST ma non salvato in `url_indicators` nel database; il GET dallo storico non lo trovava e mostrava sempre "WHOIS non eseguito"
+- **Bug badge WHOIS — campo mancante nelle analisi vecchie** — le analisi create prima dell'introduzione di `whois_attempted` non avevano il campo nel DB; il frontend ora gestisce correttamente l'assenza del campo mostrando "WHOIS non eseguito"
+
+---
+
 ## [0.3.1] — 2026
 
 ### Corretto
