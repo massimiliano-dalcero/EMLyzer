@@ -2,6 +2,8 @@
 
 **Piattaforma open-source di analisi forense delle email** per identificare spam, phishing e contenuti malevoli.
 
+![Immagine cover](/images/emlyzer_cover.png)
+
 EMLyzer permette di analizzare un'email sospetta caricando il file `.eml` o `.msg`, oppure incollando direttamente il sorgente, e ottiene in pochi secondi un **rapporto completo** con punteggio di rischio spiegabile, analisi degli header, del corpo, degli URL, degli allegati e dei servizi di reputazione.
 
 > **Non è necessaria nessuna API key per iniziare.** Le integrazioni con servizi esterni (AbuseIPDB, VirusTotal, ecc.) sono opzionali e configurabili successivamente.
