@@ -119,7 +119,7 @@ async def run_analysis(
     db.add(record)
     await db.commit()
 
-    return _build_response(job_id, parsed, header_result, body_result, url_result, attachment_result, risk)
+    return _build_response(job_id, parsed, header_result, body_result, url_result, attachment_result, risk, do_whois)
 
 
 @router.get("/{job_id}")
@@ -270,7 +270,7 @@ def _build_response_from_record(record) -> dict:
     }
 
 
-def _build_response(job_id, parsed, header_result, body_result, url_result, attachment_result, risk) -> dict:
+def _build_response(job_id, parsed, header_result, body_result, url_result, attachment_result, risk, do_whois: bool = False) -> dict:
     return {
         "job_id": job_id,
         "status": "completed",
@@ -333,6 +333,7 @@ def _build_response(job_id, parsed, header_result, body_result, url_result, atta
                     "resolved_ip": u.resolved_ip,
                     "domain_age_days": u.domain_age_days,
                     "whois_creation_date": str(u.whois_creation_date) if u.whois_creation_date else None,
+                    "whois_attempted": do_whois,
                     "risk_score": u.risk_score,
                     "findings": u.findings,
                 }

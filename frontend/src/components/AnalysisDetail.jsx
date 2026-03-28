@@ -517,10 +517,19 @@ function URLCard({ url, t }) {
         {url.is_shortener && <Tag color="var(--risk-medium)">{t('url.shortener')}</Tag>}
         {url.is_punycode  && <Tag color="var(--risk-high)">{t('url.punycode')}</Tag>}
         {url.resolved_ip  && <Tag color="var(--text-muted)">{url.resolved_ip}</Tag>}
-        {url.domain_age_days != null && url.domain_age_days < 30  && <Tag color="var(--risk-high)">{t('url.age_new', { days: url.domain_age_days })}</Tag>}
-        {url.domain_age_days != null && url.domain_age_days >= 30 && url.domain_age_days < 90 && <Tag color="var(--risk-medium)">{t('url.age_recent', { days: url.domain_age_days })}</Tag>}
-        {url.domain_age_days != null && url.domain_age_days >= 90 && <Tag color="var(--risk-low)">{t('url.age_ok', { days: url.domain_age_days })}</Tag>}
-        {url.domain_age_days == null && url.whois_creation_date === null && url.host && !url.is_ip && <Tag color="var(--text-muted)">{t('url.whois_no_data')}</Tag>}
+        {/* Badge WHOIS età dominio */}
+        {!url.is_ip && url.whois_attempted === true && (
+          url.domain_age_days != null
+            ? url.domain_age_days < 30
+              ? <Tag color="var(--risk-high)">{t('url.age_new', { days: url.domain_age_days })}</Tag>
+              : url.domain_age_days < 90
+                ? <Tag color="var(--risk-medium)">{t('url.age_recent', { days: url.domain_age_days })}</Tag>
+                : <Tag color="var(--risk-low)">{t('url.age_ok', { days: url.domain_age_days })}</Tag>
+            : <Tag color="var(--text-muted)">{t('url.whois_no_data')}</Tag>
+        )}
+        {!url.is_ip && !url.whois_attempted && (
+          <Tag color="var(--text-muted)" title={t('url.whois_disabled_hint')}>{t('url.whois_disabled')}</Tag>
+        )}
       </div>
       {url.findings?.map((f, i) => (
         <div key={i} style={{ fontSize: 11, color: 'var(--text-muted)', paddingLeft: 8, borderLeft: '2px solid var(--border)', marginTop: 3 }}>
@@ -531,9 +540,9 @@ function URLCard({ url, t }) {
   )
 }
 
-function Tag({ children, color }) {
+function Tag({ children, color, title }) {
   return (
-    <span style={{ padding: '1px 7px', borderRadius: 3, fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', color, background: color + '22', border: `1px solid ${color}44` }}>
+    <span title={title} style={{ padding: '1px 7px', borderRadius: 3, fontSize: 10, fontWeight: 600, letterSpacing: '0.04em', color, background: color + '22', border: `1px solid ${color}44`, cursor: title ? 'help' : 'default' }}>
       {children}
     </span>
   )
