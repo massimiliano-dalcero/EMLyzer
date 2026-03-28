@@ -264,9 +264,26 @@ def _build_response_from_record(record) -> dict:
             "nlp":                     bi.get("nlp", None),
         },
         "url_analysis": {
-            "total_urls":     ui.get("total_urls", 0),
+            "total_urls":      ui.get("total_urls", 0),
             "high_risk_count": ui.get("high_risk_count", 0),
-            "urls":           ui.get("urls", []),
+            "urls": [
+                {
+                    # Normalizza i nomi dal dataclass ai nomi usati dal frontend
+                    "url":              u.get("original_url", u.get("url", "")),
+                    "host":             u.get("host", ""),
+                    "is_ip":            u.get("is_ip_address", u.get("is_ip", False)),
+                    "is_shortener":     u.get("is_shortener", False),
+                    "is_punycode":      u.get("is_punycode", False),
+                    "https":            u.get("https_used", u.get("https", False)),
+                    "resolved_ip":      u.get("resolved_ip", ""),
+                    "domain_age_days":  u.get("domain_age_days"),
+                    "whois_creation_date": u.get("whois_creation_date"),
+                    "whois_attempted":  u.get("whois_attempted", False),
+                    "risk_score":       u.get("risk_score", 0),
+                    "findings":         u.get("findings", []),
+                }
+                for u in ui.get("urls", [])
+            ],
         },
         "attachment_analysis": {
             "total":          ai.get("total_attachments", 0),
