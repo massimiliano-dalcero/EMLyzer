@@ -23,6 +23,7 @@ Note sui nomi dei campi nel DB:
 """
 
 import re
+import asyncio
 import ipaddress
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -143,7 +144,20 @@ async def run_reputation(
 
     ips, urls, hashes = _extract_indicators(record)
 
-    summary = run_reputation_checks(ips=ips, urls=urls, hashes=hashes)
+    # run_reputation_checks è sincrono (requests blocking).
+    # Lo eseguiamo in un thread separato per non bloccare il loop asyncio di FastAPI.
+    # Il timeout di 50s garantisce una risposta prima del timeout del browser (60s).
+    loop = asyncio.get_event_loop()
+    try:
+        summary = await asyncio.wait_for(
+            loop.run_in_executor(None, run_reputation_checks, ips, urls, hashes),
+            timeout=55.0,
+        )
+    except asyncio.TimeoutError:
+        raise HTTPException(
+            status_code=504,
+            detail="I servizi di reputazione hanno impiegato troppo tempo. Riprova tra qualche istante.",
+        )
 
     rep_dict = json.loads(json.dumps(asdict(summary), default=str))
     record.reputation_results = rep_dict

@@ -22,6 +22,7 @@ function useDebounce(value, delay) {
 
 export default function Dashboard() {
   const { t } = useLang()
+  const [appVersion, setAppVersion] = useState('')
   const [analyses, setAnalyses]   = useState([])
   const [total, setTotal]         = useState(0)
   const [pages, setPages]         = useState(1)
@@ -36,6 +37,14 @@ export default function Dashboard() {
   const PAGE_SIZE = 25
 
   const debouncedQ = useDebounce(searchQ, 350)
+
+  // Carica la versione dal backend (evita hardcoding nel bundle)
+  useEffect(() => {
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(d => setAppVersion(d.version || ''))
+      .catch(() => {})
+  }, [])
 
   const fetchList = useCallback(async () => {
     setLoading(true)
@@ -111,7 +120,7 @@ export default function Dashboard() {
           marginLeft: 4, padding: '1px 8px', borderRadius: 4,
           background: 'var(--bg-card)', border: '1px solid var(--border)',
           fontSize: 10, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)',
-        }}>v0.3.3</span>
+        }}>{appVersion ? `v${appVersion}` : '…'}</span>
         <div style={{ flex: 1 }} />
         <LanguageSwitcher />
       </header>

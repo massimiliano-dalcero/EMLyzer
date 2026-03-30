@@ -8,7 +8,7 @@ set "VENV_DIR=%~dp0.venv"
 set "VENV_PYTHON=%~dp0.venv\Scripts\python.exe"
 set "FOUND_PYTHON="
 set "FOUND_VER="
-set "VERSION=0.3.4"
+set "VERSION=0.3.5"
 
 :: ── Leggi versione da config.py usando Python (piu' affidabile di for/f) ──────
 :: Viene fatto dopo aver trovato Python, quindi piu' avanti nello script.
@@ -29,6 +29,34 @@ if not exist "%BACKEND_DIR%\main.py" (
     echo.
     pause
     exit /b 1
+)
+
+:: ── Controlla che il bundle frontend esista (o lo builda automaticamente) ────
+if not exist "%BACKEND_DIR%\static\assets\index.js" (
+    where node >nul 2>&1
+    if not errorlevel 1 (
+        if exist "%~dp0frontend\package.json" (
+            echo [INFO] Bundle frontend non trovato. Compilo il frontend...
+            cd /d "%~dp0frontend"
+            call npm install -q
+            call npm run build
+            xcopy /e /y /q "%~dp0frontend\dist\*" "%BACKEND_DIR%\static\" >nul
+            cd /d "%~dp0"
+            echo [INFO] Frontend compilato e copiato.
+            echo.
+        ) else (
+            goto :bundle_error
+        )
+    ) else (
+        :bundle_error
+        echo [ERRORE] Bundle frontend non trovato: backend\static\assets\index.js
+        echo          Copia i file dalla release oppure compila:
+        echo            cd frontend ^&^& npm install ^&^& npm run build
+        echo            xcopy /e /y frontend\dist\* backend\static\
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
 :: ── Controlla che la porta 8000 sia libera ────────────────────────────────────

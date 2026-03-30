@@ -16,7 +16,10 @@ PYTHON_MIN_MINOR="11"       # Minor minimo accettabile (compatibilità minima)
 PYTHON_MAX_MINOR="13"       # Minor massimo accettabile (versioni > NON sono supportate)
 
 # ── Leggi versione da config.py ───────────────────────────────────────────────
-VERSION=$(grep -oP '(?<=VERSION: str = ")[^"]+' "$BACKEND_DIR/utils/config.py" 2>/dev/null || echo "0.3.3")
+# La versione è sempre letta da config.py — unica fonte di verità
+VERSION=$(grep -oP '(?<=VERSION: str = ")[^"]+' "$BACKEND_DIR/utils/config.py" 2>/dev/null)
+[ -z "$VERSION" ] && VERSION=$(grep -oP '(?<=VERSION = ")[^"]+' "$BACKEND_DIR/utils/config.py" 2>/dev/null)
+[ -z "$VERSION" ] && VERSION="???"
 
 echo ""
 echo " ============================================"
@@ -29,6 +32,26 @@ if [ ! -f "$BACKEND_DIR/main.py" ]; then
     echo "[ERRORE] File backend/main.py non trovato."
     echo "         Esegui start.sh dalla cartella EMLyzer/"
     exit 1
+fi
+
+# ── Controlla che il bundle frontend esista (o lo builda automaticamente) ────
+FRONTEND_DIR="$SCRIPT_DIR/frontend"
+if [ ! -f "$BACKEND_DIR/static/assets/index.js" ]; then
+    if command -v node &>/dev/null && [ -f "$FRONTEND_DIR/package.json" ]; then
+        echo "[INFO] Bundle frontend non trovato. Compilo il frontend..."
+        cd "$FRONTEND_DIR"
+        npm install -q && npm run build
+        cp -r "$FRONTEND_DIR/dist/." "$BACKEND_DIR/static/"
+        cd "$SCRIPT_DIR"
+        echo "[INFO] Frontend compilato e copiato."
+        echo ""
+    else
+        echo "[ERRORE] Bundle frontend non trovato: backend/static/assets/index.js"
+        echo "         Copia i file dalla release o esegui:"
+        echo "           cd frontend && npm install && npm run build"
+        echo "           cp -r frontend/dist/. backend/static/"
+        exit 1
+    fi
 fi
 
 # ── Controlla che la porta sia libera ────────────────────────────────────────

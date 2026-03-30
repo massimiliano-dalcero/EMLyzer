@@ -31,7 +31,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="EMLyzer",
     description="Open-source email forensics & threat analysis platform",
-    version="0.1.0",
+    version=settings.VERSION,
     lifespan=lifespan,
 )
 

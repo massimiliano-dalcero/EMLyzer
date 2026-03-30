@@ -14,7 +14,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class Settings(BaseSettings):
     # App
     APP_NAME: str = "EMLyzer"
-    VERSION: str = "0.3.4"
+    VERSION: str = "0.3.5"
     DEBUG: bool = False
 
     # CORS - frontend dev server

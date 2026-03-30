@@ -18,6 +18,7 @@ from datetime import datetime, timezone
 from docx import Document
 from docx.shared import Pt, RGBColor, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from utils.config import settings
 
 
 RISK_COLORS = {
@@ -79,7 +80,7 @@ def generate_report(record, output_path: Path):
     # ------------------------------------------------------------------ #
     # COPERTINA / TITOLO
     # ------------------------------------------------------------------ #
-    title = doc.add_heading("EMLyzer – Report di Analisi", 0)
+    title = doc.add_heading(f"EMLyzer v{settings.VERSION} – Report di Analisi", 0)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
     p = doc.add_paragraph()
@@ -207,7 +208,7 @@ def generate_report(record, output_path: Path):
         _add_kv(doc, "URL ad alto rischio", str(ui.get("high_risk_count", 0)))
         for u in url_list[:30]:
             flags = []
-            if u.get("is_ip"):
+            if u.get("is_ip_address") or u.get("is_ip"):
                 flags.append("IP diretto")
             if u.get("is_shortener"):
                 flags.append("URL shortener")
@@ -215,7 +216,7 @@ def generate_report(record, output_path: Path):
                 flags.append("Punycode/IDN")
             flag_str = " | ".join(flags) if flags else "OK"
             doc.add_paragraph(
-                f"[score: {u.get('risk_score', 0):.0f}] {u.get('url', '')[:200]} ({flag_str})",
+                f"[score: {u.get('risk_score', 0):.0f}] {(u.get('original_url') or u.get('url', ''))[:200]} ({flag_str})",
                 style="List Bullet",
             )
 
@@ -251,16 +252,64 @@ def generate_report(record, output_path: Path):
     if rep:
         _add_kv(doc, "Score reputazione", f"{rep.get('reputation_score', 0):.1f}/100")
         _add_kv(doc, "Indicatori malevoli", str(rep.get("malicious_count", 0)))
-        for r in rep.get("ip_results", []) + rep.get("url_results", []) + rep.get("hash_results", []):
-            if r.get("skipped"):
+
+        # Entità analizzate (disponibili da v0.3.4+)
+        ea = rep.get("entities_analyzed")
+        if ea:
+            _add_kv(doc, "IP analizzati", str(ea.get("ips", 0)))
+            _add_kv(doc, "URL analizzati", str(ea.get("urls", 0)))
+            if ea.get("hashes", 0) > 0:
+                _add_kv(doc, "Hash analizzati", str(ea.get("hashes", 0)))
+
+        # Risultati per categoria — separati per leggibilità
+        ip_results  = [r for r in rep.get("ip_results",   []) if not r.get("skipped")]
+        url_results = [r for r in rep.get("url_results",  []) if not r.get("skipped")]
+        hsh_results = [r for r in rep.get("hash_results", []) if not r.get("skipped")]
+
+        # Servizi di sicurezza: mostra tutti i risultati malevoli + errori
+        for section_label, results in [
+            ("Risultati IP", ip_results),
+            ("Risultati URL", url_results),
+            ("Risultati Hash allegati", hsh_results),
+        ]:
+            if not results:
                 continue
-            status = "MALEVOLO" if r.get("is_malicious") else "pulito"
-            doc.add_paragraph(
-                f"[{r.get('source')}] {r.get('entity', '')[:100]} → {status} | {r.get('detail', '')}",
-                style="List Bullet",
-            )
+            doc.add_paragraph()
+            _add_heading(doc, section_label, level=2)
+            for r in results:
+                # Servizi informativi (ASN, crt.sh, Redirect Chain) → mostra solo il dettaglio
+                info_services = {"ASN Lookup", "crt.sh", "Redirect Chain"}
+                if r.get("source") in info_services:
+                    if r.get("detail") and not r.get("error"):
+                        doc.add_paragraph(
+                            f"[{r.get('source')}] {r.get('entity', '')[:80]}: {r.get('detail', '')[:200]}",
+                            style="List Bullet",
+                        )
+                    elif r.get("error"):
+                        doc.add_paragraph(
+                            f"[{r.get('source')}] {r.get('entity', '')[:80]}: errore — {r.get('error', '')[:100]}",
+                            style="List Bullet",
+                        )
+                    continue
+
+                status = "⚠ MALEVOLO" if r.get("is_malicious") else "pulito"
+                detail = r.get("detail", "")[:200]
+                err    = r.get("error", "")
+                line   = f"[{r.get('source')}] {r.get('entity', '')[:100]} → {status}"
+                if detail:
+                    line += f" | {detail}"
+                if err:
+                    line += f" | ERRORE: {err[:80]}"
+                p = doc.add_paragraph(line, style="List Bullet")
+                if r.get("is_malicious"):
+                    for run in p.runs:
+                        run.font.color.rgb = RGBColor(0xD3, 0x2F, 0x2F)
     else:
-        doc.add_paragraph("Analisi di reputazione non eseguita (usa POST /api/reputation/{job_id}).")
+        doc.add_paragraph(
+            "Analisi di reputazione non eseguita. "
+            "Clicca 'Avvia controllo reputazione' nella scheda Reputazione "
+            "oppure usa POST /api/reputation/{job_id}."
+        )
 
     doc.add_page_break()
 
